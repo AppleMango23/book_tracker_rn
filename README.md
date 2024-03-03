@@ -5,5 +5,4 @@
    - Will be on Splash screen
    - Home screen
    - Tutorial screen
-3. Try out the React Native Navigation (RNN)
-   - Gonna have better performance see how
+3. Try using React-Query
