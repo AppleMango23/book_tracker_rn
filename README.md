@@ -6,4 +6,5 @@
    - Home screen
    - Tutorial screen
 3. Try using React-Query
-4. Add Detox into it
+4. Try out darkmode
+5. Add Detox into it
