@@ -10,15 +10,22 @@
     "test": "jest"
   },
   "dependencies": {
-    "@react-three/drei": "9.99.5",
-    "@react-three/fiber": "8.15.19",
+    "@react-navigation/bottom-tabs": "6.5.16",
+    "@react-navigation/native": "6.1.14",
+    "@react-navigation/native-stack": "6.9.22",
+    "@react-navigation/stack": "6.3.25",
+    "@react-three/drei": "9.99.0",
+    "@react-three/fiber": "8.15.16",
     "@shopify/react-native-skia": "0.1.241",
+    "expo": "^50.0.0",
+    "expo-gl": "^13.6.0",
     "r3f-native-orbitcontrols": "1.0.11",
     "react": "18.2.0",
     "react-native": "0.73.5",
     "react-native-gesture-handler": "2.15.0",
     "react-native-reanimated": "3.7.2",
-    "react-navigation": "5.0.0",
+    "react-native-safe-area-context": "4.9.0",
+    "react-native-screens": "3.29.0",
     "three": "0.162.0"
   },
   "devDependencies": {
@@ -35,6 +42,7 @@
     "eslint": "^8.19.0",
     "jest": "^29.6.3",
     "prettier": "2.8.8",
+    "react-native-svg-transformer": "^1.3.0",
     "react-test-renderer": "18.2.0",
     "typescript": "5.0.4"
   },
