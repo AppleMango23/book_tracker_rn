@@ -6,3 +6,4 @@
    - Home screen
    - Tutorial screen
 3. Try using React-Query
+4. Add Detox into it
