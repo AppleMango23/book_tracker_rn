@@ -1,118 +1,111 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
+import {StyleSheet, View, FlatList, ViewToken} from 'react-native';
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedRef,
+} from 'react-native-reanimated';
+import data, {OnboardingData} from './src/data/data';
+import {Canvas} from '@react-three/fiber/native';
+import Abstract from './src/components/Abstract';
+import useControls from 'r3f-native-orbitcontrols';
+import {Float} from '@react-three/drei/native';
+import Pagination from './src/components/Pagination';
+import Button from './src/components/Button';
+import RenderItem from './src/components/RenderItem';
+import Backdrop from './src/components/Backdrop';
+import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const OnboardingScreen = () => {
+  const flatListRef = useAnimatedRef<FlatList<OnboardingData>>();
+  const x = useSharedValue(0);
+  const flatListIndex = useSharedValue(0);
+  const [OrbitControls, events] = useControls();
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const onViewableItemsChanged = ({
+    viewableItems,
+  }: {
+    viewableItems: ViewToken[];
+  }) => {
+    if (viewableItems[0].index !== null) {
+      flatListIndex.value = viewableItems[0].index;
+    }
   };
 
+  const onScroll = useAnimatedScrollHandler({
+    onScroll: event => {
+      x.value = event.contentOffset.x;
+    },
+  });
+
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
+    <NavigationContainer>
+    <View style={styles.container}>
+      <Backdrop x={x} />
+
+      <View style={styles.abstractContainer} {...events}>
+        <Canvas>
+          <OrbitControls enableZoom={false} enablePan={false} />
+          <ambientLight intensity={2} />
+          <directionalLight position={[0, 1, 0]} args={['white', 2]} />
+          <directionalLight position={[0, 0, 1]} args={['white', 2]} />
+          <Float speed={8} floatIntensity={3}>
+            <Abstract x={x} />
+          </Float>
+        </Canvas>
+      </View>
+      
+      <Animated.FlatList
+        ref={flatListRef}
+        onScroll={onScroll}
+        data={data}
+        renderItem={({item}) => {
+          return <RenderItem item={item} />;
+        }}
+        keyExtractor={item => item.id}
+        scrollEventThrottle={16}
+        horizontal={true}
+        bounces={false}
+        pagingEnabled={true}
+        showsHorizontalScrollIndicator={false}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={{
+          minimumViewTime: 300,
+          viewAreaCoveragePercentThreshold: 10,
+        }}
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      
+      <View style={styles.bottomContainer}>
+        <Pagination data={data} x={x} />
+        <Button
+          flatListRef={flatListRef}
+          flatListIndex={flatListIndex}
+          dataLength={data.length}
+          x={x}
+        />
+      </View>
+    </View>
+    </NavigationContainer>
+
   );
-}
+};
+
+export default OnboardingScreen;
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  abstractContainer: {
+    flex: 1,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  bottomContainer: {
+    alignItems: 'center',
+    paddingVertical: 30,
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
   },
 });
-
-export default App;
